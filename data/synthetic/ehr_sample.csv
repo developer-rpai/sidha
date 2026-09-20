@@ -1,0 +1,10 @@
+patient_id,event_date,event_type,code,code_system,display,value
+P001,2019-03-14,condition,L02.9,ICD10,Cutaneous abscess,
+P001,2020-07-02,condition,L70.0,ICD10,Acne vulgaris,
+P001,2023-01-20,condition,L73.2,ICD10,Hidradenitis suppurativa,
+P001,2023-02-15,medication,RXNORM:1014673,RXNORM,adalimumab,
+P002,2021-11-05,condition,L05.91,ICD10,Pilonidal cyst without abscess,
+P002,2022-06-30,condition,L73.2,ICD10,Hidradenitis suppurativa,
+P002,2022-08-01,observation,FLARE,SIDHA,HS flare episode,1
+P003,2020-01-10,condition,E66.9,ICD10,Obesity,
+P003,2020-05-22,condition,F32.9,ICD10,Major depressive disorder,

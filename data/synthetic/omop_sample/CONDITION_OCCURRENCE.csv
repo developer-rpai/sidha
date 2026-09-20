@@ -1,0 +1,4 @@
+person_id,condition_concept_id,condition_start_date,condition_source_value
+P001,137809,2019-03-14,L02.9
+P001,137810,2023-01-20,L73.2
+P002,137811,2021-11-05,L05.91
