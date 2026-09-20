@@ -1,0 +1,20 @@
+name: ci
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install package
+        run: pip install -e ".[dev]"
+      - name: Compile check
+        run: python -m compileall sidha tests
+      - name: Run tests
+        run: python -m pytest -q
+      - name: Smoke test
+        run: python -c "import sidha; print(sidha.__version__)"

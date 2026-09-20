@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+title: "SIDHA: Sensor-to-Insight Data for Hidradenitis Suppurativa Architecture"
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - family-names: Pai
+    given-names: Rakesh
+license: Apache-2.0
+version: 0.1.0
+date-released: 2026-09-12
+repository-code: "https://github.com/developer-rpai/sidha"
+keywords:
+  - hidradenitis-suppurativa
+  - OMOP-CDM
+  - FHIR
+  - health-data-infrastructure
+  - clinical-NLP
+  - ICD-10

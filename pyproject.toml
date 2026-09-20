@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sidha"
+version = "0.1.0"
+description = "Sensor-to-Insight Data for Hidradenitis Suppurativa Architecture — open reference implementation"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Rakesh Pai", email = "pairakesh10@gmail.com" },
+]
+requires-python = ">=3.10"
+keywords = [
+    "hidradenitis-suppurativa",
+    "omop-cdm",
+    "fhir",
+    "health-data",
+    "icd-10",
+    "clinical-nlp",
+]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Healthcare Industry",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+
+[project.urls]
+Homepage = "https://github.com/developer-rpai/sidha"
+Repository = "https://github.com/developer-rpai/sidha"
+Issues = "https://github.com/developer-rpai/sidha/issues"
+
+[project.optional-dependencies]
+social = ["praw>=7.7"]
+dev = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["sidha*"]
