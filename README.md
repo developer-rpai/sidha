@@ -1,3 +1,5 @@
+[![CI](https://github.com/developer-rpai/sidha/actions/workflows/ci.yml/badge.svg)](https://github.com/developer-rpai/sidha/actions/workflows/ci.yml)
+
 # SIDHA — Sensor-to-Insight Data for Hidradenitis Suppurativa Architecture
 
 An open reference implementation for turning **episodic clinical records** and
