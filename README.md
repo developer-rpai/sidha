@@ -1,10 +1,57 @@
 [![CI](https://github.com/developer-rpai/sidha/actions/workflows/ci.yml/badge.svg)](https://github.com/developer-rpai/sidha/actions/workflows/ci.yml)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Python >=3.10](https://img.shields.io/badge/python-%3E%3D3.10-blue.svg)](pyproject.toml)
 
 # SIDHA — Sensor-to-Insight Data for Hidradenitis Suppurativa Architecture
 
-An open reference implementation for turning **episodic clinical records** and
-**public social-listening data** into continuous, research-ready hidradenitis
-suppurativa (HS) intelligence.
+**SIDHA is an open reference data architecture for hidradenitis suppurativa (HS)
+research: it turns fragmented, episodic data — clinic records, public patient
+discussions, and (next) wearable-sensor streams — into a continuous,
+research-ready signal for early detection and flare-risk prediction.**
+
+HS patients routinely wait the better part of a decade for a correct diagnosis
+while rich early signals scatter across EHR codes, registries, and patient
+forums. SIDHA ingests those heterogeneous sources, maps everyday patient
+language to clinical taxonomies (ICD/SNOMED), normalizes everything to open
+health-data standards (OMOP CDM, FHIR R4), and scores early-detection risk with
+transparent, explainable models — all runnable on synthetic data with zero PHI.
+
+## Install
+
+```bash
+git clone https://github.com/developer-rpai/sidha.git
+cd sidha
+pip install -e .     # PyPI release planned for Phase 5
+```
+
+Requires Python ≥ 3.10. The core is stdlib-only — no heavy dependencies.
+
+## 30-second demo
+
+End-to-end on synthetic data (deterministic, no PHI, no setup):
+
+```python
+from sidha.datasets import generate_cohort
+from sidha.ehr import build_timelines
+from sidha.clinical import summarize_cohort
+from sidha.diagnostics import EarlyDetectionScreener, misdiagnosis_report
+
+# Synthetic cohort -> patient timelines -> cohort summary
+events = generate_cohort(n_patients=200, seed=99)
+timelines = list(build_timelines(events).values())
+print(summarize_cohort(timelines))
+
+# How long does HS take to be diagnosed, and what is it confused with?
+print(misdiagnosis_report(timelines)["median_delay_days_overall"])
+
+# Early-detection screening on one patient — score plus the reasons why
+screener = EarlyDetectionScreener()          # reference weights
+print(f"risk score: {screener.score(timelines[0]):.3f}")
+print(screener.feature_contributions(timelines[0])[:3])
+```
+
+A fuller pipeline (FHIR/OMOP loaders, differential ranking, calibrating the
+screener on your own cohort) follows below — keep reading.
 
 ## Why this exists
 
