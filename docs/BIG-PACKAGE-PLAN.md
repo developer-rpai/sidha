@@ -6,16 +6,33 @@ functionalities: EHR ingestion, clinical coding and phenotyping, diagnostic
 support, sensor streams, public dataset loaders, normalization to open standards,
 and reproducible evaluation.
 
+Scope note (prep, 2026-10-03): this is inflammatory-disease data
+infrastructure. Hidradenitis suppurativa is the flagship example in the
+phenotypes, fixtures, and synthetic demo. That example is not a claim that
+the loaders only accept HS data. The name SIDHA is unchanged. Nothing in
+this file is a published release, and there is no Zenodo DOI.
+
 ## Where things stand today
 
-- The scaffold lives **only on this machine** at `~/workspace/profile-building/sidha`.
-  Nothing has been pushed to GitHub yet. The GitHub repo creation and first push
-  are still your tap (exact commands are in Phase 0 below).
-- Current modules: `ingest` (Reddit collector), `clinical` (ICD-10 mapping),
-  `taxonomy`, `normalize`, `judge`, `eval` (skeleton), synthetic fixtures, 11
-  passing tests, CI workflow, Apache 2.0 license, CITATION.cff.
-- This plan grows that scaffold into the full package described below. Nothing
-  here replaces the existing 90-day roadmap; it extends it.
+- The project is public at `https://github.com/developer-rpai/sidha` on
+  branch `main`. It is not a local-only scaffold, and it has been pushed.
+  An earlier draft of this file said the tree lived only at
+  `~/workspace/profile-building/sidha` and that nothing had been pushed.
+  That is no longer true. Do not re-run the old `git init` / `gh repo create`
+  commands.
+- Package version string on `main` is `0.1.0` (`pyproject.toml`,
+  `sidha/__init__.py`, `CITATION.cff`). There is no git tag and no GitHub
+  Release. The prep branch does not bump that string and does not add a DOI.
+- Modules that run: `ehr` (CSV, FHIR R4 Bundle, OMOP CDM CSV loaders),
+  `clinical`, `diagnostics`, `datasets` (synthetic cohort generator and a
+  source catalog), `ingest` (Reddit collector behind the `social` extra).
+  `taxonomy`, `normalize`, `judge`, and `eval` are still docstring-only
+  placeholders. There is no `sensors` package.
+- An earlier draft of this plan said "11 passing tests". The README on
+  `main` stated "52 tests". This prep edit does not re-run pytest and does
+  not add a new count.
+- This plan still describes the larger package below. It does not replace
+  [ROADMAP.md](ROADMAP.md).
 
 ## Package architecture (target v1.0)
 
@@ -46,105 +63,110 @@ sidha/
                 checks for shared extracts
 ```
 
+`sensors`, `nlp`, `viz`, and `privacy` are not in the tree. `normalize`,
+`eval`, and `judge` are placeholders. Do not read this diagram as shipped code.
+
 ## Data coverage: what the package will handle
 
 ### 1. EHR data (`sidha.ehr`)
-- Loaders for FHIR R4 Bundle JSON, OMOP CDM table extracts (CSV/Parquet), and
-  flat clinical-record CSVs with a documented schema.
+
+- Loaders for FHIR R4 Bundle JSON, OMOP CDM table extracts (CSV/Parquet),
+  and flat clinical-record CSVs with a documented schema. Parquet is not
+  implemented.
 - Patient-journey builder: longitudinal record -> ordered event timeline per
   patient (encounters, conditions, meds, procedures).
-- All loaders are format-first and PHI-agnostic: they document expected columns
-  and validate input, and every example in docs runs on synthetic data.
+- All loaders are format-first. They are not limited to HS codes. Every
+  example in docs runs on synthetic data.
 
 ### 2. Clinical data (`sidha.clinical`)
+
 - Code-system crosswalks: ICD-10-CM (L73.x family + comorbidities), ICD-11,
-  SNOMED CT concepts for HS and related conditions.
+  SNOMED CT concepts for HS and related conditions. HS is the flagship
+  example of a broader inflammatory-disease coding surface.
 - Computable phenotypes: rule-based HS case definitions plus comorbidity
   phenotypes, versioned and citable so other groups can reuse them directly.
 - Instrument scoring: HiSQOL and HSSD scoring functions with validation.
 
 ### 3. Diagnostics (`sidha.diagnostics`)
+
 - Diagnostic-delay analytics: given longitudinal records, compute time from
-  first HS-suggestive codes to confirmed HS diagnosis, stratified by
-  demographics. This directly reproduces the published claims-data findings
-  (e.g., the 5.9M-record XGBoost study, AUC 0.80) as runnable package code.
-- Early-detection screener: a reference implementation of a claims/EHR-pattern
-  classifier for pre-diagnosis HS risk, with documented features and evaluation.
-- Differential-diagnosis ranking with the existing LLM-as-judge harness.
+  first suggestive codes to a confirmed diagnosis, with HS as the flagship
+  case definition.
+- Early-detection screener: a reference implementation of an EHR-pattern
+  scorer, with documented features. Reference weights are illustrative,
+  not fitted on patient data. This file does not add accuracy or cohort-size
+  claims.
+- Differential-diagnosis ranking. The LLM-as-judge harness is not implemented
+  (`sidha.judge` is a placeholder).
 
 ### 4. Public datasets (`sidha.datasets`)
+
 Honest note: HS-specific open datasets are scarce. The package handles this
 three ways:
-- **Loaders for what is public:** GEO transcriptomic HS datasets (via GEOparse;
-  e.g., the bulk/single-cell RNA-seq studies), and the Legit.Health-HS-IHS4
-  image set (221 specialist-annotated images; loader added pending license
-  confirmation).
-- **A dataset catalog:** `sidha.datasets.catalog()` lists known HS data sources
-  with access notes (public, gated, commercial): HS PROGRESS registry,
-  TARGET-DERM, OM1 HS dataset (commercial), StuffThatWorks PROs, claims-data
-  studies. Researchers see in one place what exists and how to request access.
-- **A synthetic cohort generator:** realistic synthetic HS patients
-  (demographics, codes, meds, flare timelines) so every tutorial, test, and demo
-  runs without PHI. This is what other groups will actually run first.
+
+- **Loaders for what is public:** GEO transcriptomic datasets are still
+  planned. The catalog's only `loader: available` row is the synthetic cohort.
+- **A dataset catalog:** `sidha.datasets` lists known sources with access
+  notes. Researchers see in one place what exists and how to request access.
+- **A synthetic cohort generator:** synthetic patients so every tutorial,
+  test, and demo runs without real patient data. The generator shipped with
+  the HS flagship example. It is already on `main`.
 
 ### 5. Sensors (`sidha.sensors`)
-- Time-series loaders for wearable exports (CSV/JSON), resampling and gap
-  handling, flare-event labeling tools, and feature extraction windows aligned
-  to the sensor-to-insight architecture.
+
+Not in the tree. Planned later: time-series loaders for wearable exports,
+resampling and gap handling, flare-event labeling, and feature windows.
 
 ## Researcher-sharing readiness
 
-- `pip install sidha` from PyPI (name check pending), plus conda-forge and a
-  Docker image for exact reproducibility.
-- Docs site (MkDocs): quickstart, tutorials on synthetic data, module API
-  reference, dataset catalog, phenotyping definitions.
-- Tutorial notebooks runnable end-to-end with zero private data.
-- Zenodo DOI per release + CITATION.cff so groups can cite it.
-- Governance: code of conduct, contributing guide, issue templates, maintainer
-  playbook, `good-first-issue` backlog to attract outside contributors.
+- `pip install sidha` from PyPI is not available. The name was unclaimed at
+  inspection on 2026-10-03. Re-check before any publish. Conda-forge and
+  Docker are not in scope for the unreleased 0.2.0 prep.
+- Docs site (MkDocs) is not built.
+- Tutorial notebooks: `notebooks/` has no notebook yet.
+- Zenodo DOI: not minted. `CITATION.cff` has no `doi` field.
+- Governance: contributing guide exists. Issue label for newcomers is
+  `good first issue` (spaces), not `good-first-issue`.
 
 ## Phased build plan
 
-- **Phase 0 (this week):** GitHub repo created, scaffold pushed, CI green,
-  PyPI name reserved. Your taps: create repo, run the push commands.
-- **Phase 1: DONE (Sep 14, 2026).** `ehr` + `clinical` core built and tested:
-  `ehr` (ClinicalEvent/PatientTimeline, flat-CSV loader, FHIR R4 bundle
-  loader, OMOP CDM loader), `clinical` (ICD-11/SNOMED crosswalks, versioned
-  computable phenotypes, diagnostic-delay analytics, Hurley staging, Likert
-  instrument scoring), `datasets` (synthetic cohort generator, 7-source
-  dataset catalog). 29 tests passing, README quickstart updated.
-  Still yours: GitHub repo creation + first push.
-- **Phase 2: DONE (Sep 19, 2026).** `diagnostics`. `features` (10 documented
-  EHR-pattern features from timelines), `screener` (`EarlyDetectionScreener`:
-  transparent logistic-style risk scorer with reference weights, stdlib-only
-  `fit()` via batch gradient descent, `evaluate()` with AUC/sens/spec/PPV/NPV,
-  `threshold_sweep()`), `differential` (evidence-accumulating differential
-  ranking over HS + 5 mimics with human-readable reasons), `misdiagnosis`
-  (cohort-level misdiagnosis-pattern reports: per-code shares and median
-  delays). 23 new tests; 52 total passing. Honest framing throughout:
-  research aid, not a diagnostic device; reference weights are illustrative
-  defaults, not fitted on real data.
-  Still yours: GitHub repo creation + first push (see LAUNCH-CHECKLIST.md).
-- **Phase 3 (next):** `datasets`. GEO loaders, IHS4 loader (license permitting),
-  dataset catalog, synthetic cohort generator.
-- **Phase 4:** `sensors` + `nlp` + `viz` + `privacy`. Full pipeline:
-  raw data in, normalized OMOP/FHIR out, evaluated and visualized.
+- **Phase 0:** done. The GitHub repo exists and `main` is pushed. Do not
+  run the historical create commands again.
+- **Phase 1: on `main`.** `ehr` + `clinical` core: ClinicalEvent /
+  PatientTimeline, flat-CSV loader, FHIR R4 bundle loader, OMOP CDM loader,
+  ICD-11/SNOMED crosswalks, versioned computable phenotypes,
+  diagnostic-delay analytics, Hurley staging, Likert instrument scoring,
+  synthetic cohort generator, dataset catalog. The public repo is no longer
+  a pending "first push".
+- **Phase 2: on `main`.** `diagnostics`: documented EHR-pattern features,
+  `EarlyDetectionScreener` (reference weights, `fit()`, `evaluate()`),
+  differential ranking, misdiagnosis-pattern reports. Research aid, not a
+  diagnostic device. Reference weights are illustrative defaults, not fitted
+  on real data. This section does not quote a test total.
+- **Phase 3 (next):** public dataset loaders (GEO, and an image loader only
+  if the license allows) and catalog expansion. The synthetic cohort
+  generator is already on `main`. It is not still pending.
+- **Phase 4:** `sensors` + `nlp` + `viz` + `privacy`. Not in the tree.
 - **Phase 5:** Packaging and release. PyPI, conda-forge, Docker, docs site,
-  v1.0 tag, Zenodo DOI, short methods note on arXiv citing the repo.
+  v1.0 tag, Zenodo DOI, short methods note. Not part of this prep branch.
+  A first tag, if cut later, is v0.2.0, not a retroactive v0.1.0.
 
-## What I need from you
+## What is still a human decision
 
-1. **GitHub repo + first push** (your tap; commands below). Nothing is on
-   GitHub today.
-2. **Package name confirmation:** `sidha` on PyPI (checking availability next).
-   If taken, fallback names ready.
-3. **Clinical sign-off:** you and your supervisors verify the code crosswalks
-   and phenotype definitions before v1.0. I draft, clinicians confirm.
-4. **Dataset priorities:** confirm GEO-first ordering, and whether to pursue
-   the IHS4 image set license.
-5. **Build order approval:** Phase 1 first, or jump straight to diagnostics?
+1. **Version bump, tag, and GitHub Release** for v0.2.0. Not done here.
+2. **Package name confirmation:** `sidha` on PyPI. Re-check the day you
+   publish. This prep does not publish.
+3. **Clinical review** of crosswalks and phenotype definitions before a
+   1.0 claim. Drafts are in the tree; confirmation is not.
+4. **Dataset priorities:** GEO-first ordering, and whether to pursue an
+   image-set license.
+5. **Zenodo:** toggle the GitHub integration on before any Release you
+   want archived. Do not write a DOI before Zenodo shows one.
 
-## Phase 0 commands (your tap)
+## Phase 0 commands (historical — do not re-run)
+
+These commands were the original tap. The repository already exists.
+Running them again would fight the current `main` history.
 
 ```bash
 cd ~/workspace/profile-building/sidha
@@ -153,4 +175,4 @@ git add -A && git commit -m "SIDHA scaffold: ingest, clinical, eval skeleton"
 gh repo create developer-rpai/sidha --public --source=. --push
 ```
 
-Then tell me it's pushed and I start Phase 1.
+Phase 1 and Phase 2 are already on `main`. This section is not the current tap.
