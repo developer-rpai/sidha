@@ -1,0 +1,123 @@
+{
+  "name": "sidha-fixture-shape-check",
+  "active": false,
+  "settings": {"executionOrder": "v1"},
+  "pinData": {},
+  "meta": {"templateCredsSetupCompleted": true},
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## sidha-fixture-shape-check\n\nApache-2.0. Free to import. No Warp file and no hosted service.\n\nInflammatory-disease fixture shape checks for the columns and FHIR fields sidha.ehr already reads. Hidradenitis suppurativa is the flagship example in some sample codes, not a filter that rejects other diseases.\n\nNot an OHDSI DataQualityDashboard run. Not full OMOP CDM or FHIR profile conformance.\n\nFixtures are pinned to commit 7d73ee824910969f27ea9c545de9200e7794bebd. A missing date is a skip and does not by itself fail the run.",
+        "height": 280,
+        "width": 460
+      },
+      "id": "c1a0e5b2-7d44-4a1e-9c31-0a5f6e8b2d10",
+      "name": "Scope",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-40, -40]
+    },
+    {
+      "parameters": {},
+      "id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [480, 220]
+    },
+    {
+      "parameters": {
+        "url": "https://raw.githubusercontent.com/developer-rpai/sidha/7d73ee824910969f27ea9c545de9200e7794bebd/data/synthetic/ehr_sample.csv",
+        "options": {"response": {"response": {"responseFormat": "text", "outputPropertyName": "body"}}}
+      },
+      "id": "b1111111-1111-4111-8111-111111111111",
+      "name": "Fetch EHR CSV",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [760, 40],
+      "notes": "Public synthetic file. No token."
+    },
+    {
+      "parameters": {
+        "url": "https://raw.githubusercontent.com/developer-rpai/sidha/7d73ee824910969f27ea9c545de9200e7794bebd/data/synthetic/omop_sample/CONDITION_OCCURRENCE.csv",
+        "options": {"response": {"response": {"responseFormat": "text", "outputPropertyName": "body"}}}
+      },
+      "id": "b2222222-2222-4222-8222-222222222222",
+      "name": "Fetch CONDITION_OCCURRENCE",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [760, 180],
+      "notes": "Public synthetic file. No token."
+    },
+    {
+      "parameters": {
+        "url": "https://raw.githubusercontent.com/developer-rpai/sidha/7d73ee824910969f27ea9c545de9200e7794bebd/data/synthetic/omop_sample/DRUG_EXPOSURE.csv",
+        "options": {"response": {"response": {"responseFormat": "text", "outputPropertyName": "body"}}}
+      },
+      "id": "b3333333-3333-4333-8333-333333333333",
+      "name": "Fetch DRUG_EXPOSURE",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [760, 320],
+      "notes": "Public synthetic file. No token."
+    },
+    {
+      "parameters": {
+        "url": "https://raw.githubusercontent.com/developer-rpai/sidha/7d73ee824910969f27ea9c545de9200e7794bebd/data/synthetic/fhir_bundle_sample.json",
+        "options": {"response": {"response": {"responseFormat": "json"}}}
+      },
+      "id": "b4444444-4444-4444-8444-444444444444",
+      "name": "Fetch FHIR Bundle",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [760, 460],
+      "notes": "Public synthetic Bundle. No token."
+    },
+    {
+      "parameters": {"mode": "append", "numberInputs": 4},
+      "id": "c5555555-5555-4555-8555-555555555555",
+      "name": "Wait for fixtures",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [1080, 240]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const GIT_SHA = '7d73ee824910969f27ea9c545de9200e7794bebd';\nfunction headerOf(text) {\n  const raw = String(text ?? '').replace(/^\\uFEFF/, '');\n  const line = raw.split(/\\r?\\n/, 1)[0] || '';\n  return line.split(',').map((column) => column.trim());\n}\nfunction headerCheck(name, text, required, exact) {\n  const header = headerOf(text);\n  const missing = required.filter((column) => !header.includes(column));\n  const exactMatch = header.length === required.length && required.every((column, index) => header[index] === column);\n  const pass = exact ? exactMatch : missing.length === 0 && header.length > 0;\n  let detail;\n  if (pass) {\n    detail = exact ? 'header equals the documented load_csv columns' : 'required loader columns are present; extra columns are ignored';\n  } else if (!String(text ?? '').trim()) {\n    detail = 'empty body';\n  } else if (missing.length) {\n    detail = 'missing ' + missing.join(', ') + '; got [' + header.join(', ') + ']';\n  } else {\n    detail = 'got [' + header.join(', ') + ']; expected [' + required.join(', ') + ']';\n  }\n  return { name, pass, detail };\n}\nconst ehr = $('Fetch EHR CSV').first().json.body;\nconst condition = $('Fetch CONDITION_OCCURRENCE').first().json.body;\nconst drug = $('Fetch DRUG_EXPOSURE').first().json.body;\nconst bundle = $('Fetch FHIR Bundle').first().json;\nconst checks = [\n  headerCheck('ehr_sample.csv header', ehr, ['patient_id', 'event_date', 'event_type', 'code', 'code_system', 'display', 'value'], true),\n  headerCheck('CONDITION_OCCURRENCE.csv columns', condition, ['person_id', 'condition_concept_id', 'condition_start_date', 'condition_source_value'], false),\n  headerCheck('DRUG_EXPOSURE.csv columns', drug, ['person_id', 'drug_concept_id', 'drug_exposure_start_date', 'drug_source_value'], false),\n];\nconst allowed = new Set(['Condition', 'MedicationStatement', 'MedicationRequest', 'Procedure', 'Observation', 'Encounter']);\nconst dateFields = {\n  Condition: ['onsetDateTime', 'recordedDate'],\n  MedicationStatement: ['effectiveDateTime', 'dateAsserted'],\n  MedicationRequest: ['authoredOn'],\n  Procedure: ['performedDateTime', 'performedPeriod'],\n  Observation: ['effectiveDateTime', 'issued'],\n  Encounter: ['period'],\n};\nfunction hasDate(resource, type) {\n  for (const field of dateFields[type] || []) {\n    const raw = resource[field];\n    if (typeof raw === 'string' && raw.length >= 10) return true;\n    if (raw && typeof raw === 'object' && typeof raw.start === 'string' && raw.start.length >= 10) return true;\n  }\n  return false;\n}\nconst rootOk = !!(bundle && bundle.resourceType === 'Bundle');\nchecks.push({ name: 'fhir root resourceType', pass: rootOk, detail: rootOk ? 'resourceType is Bundle' : 'root resourceType is not Bundle' });\nconst entries = rootOk && Array.isArray(bundle.entry) ? bundle.entry : [];\nconst badTypes = [];\nconst skips = [];\nfor (const entry of entries) {\n  const resource = (entry && entry.resource) || {};\n  const type = resource.resourceType || '';\n  if (!allowed.has(type)) { badTypes.push(type || '(missing resourceType)'); continue; }\n  const ref = (resource.subject && resource.subject.reference) || '';\n  const coding = (resource.code && Array.isArray(resource.code.coding) && resource.code.coding[0]) || {};\n  const code = typeof coding.code === 'string' ? coding.code.trim() : '';\n  const dated = hasDate(resource, type);\n  if (!ref || !code || !dated) {\n    const missing = [];\n    if (!ref) missing.push('subject.reference');\n    if (!code) missing.push('code.coding[0].code');\n    if (!dated) missing.push('date');\n    skips.push(type + (code ? ' ' + code : '') + ' missing ' + missing.join(', '));\n  }\n}\nchecks.push({ name: 'fhir entry resourceTypes', pass: rootOk && badTypes.length === 0, detail: badTypes.length ? 'not in the sidha.ehr allow-list: ' + badTypes.join(', ') : 'every entry resourceType is one the loader knows' });\nchecks.push({ name: 'fhir incomplete resources', pass: true, detail: skips.length ? 'skipped by the same rule as load_bundle (does not fail this run): ' + skips.join('; ') : 'no skipped resources' });\nconst failing = checks.filter((check) => check.name !== 'fhir incomplete resources' && check.pass === false);\nreturn [{ json: { workflow: 'sidha-fixture-shape-check', git_sha: GIT_SHA, generated_at: new Date().toISOString(), status: failing.length ? 'fail' : 'pass', checks, SIDHA_SUMMARY_WEBHOOK_URL: '' } }];\n"
+      },
+      "id": "d6666666-6666-4666-8666-666666666666",
+      "name": "Check loader shape",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, 240]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.SIDHA_SUMMARY_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "e7777777-7777-4777-8777-777777777777",
+      "name": "SIDHA_SUMMARY_WEBHOOK_URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 240],
+      "disabled": true,
+      "notes": "Disabled. URL parameter is empty unless you paste your own endpoint and enable this node. Do not hard-code Slack, email, or GitHub. The summary does not include fixture bodies."
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {"main": [[{"node": "Fetch EHR CSV", "type": "main", "index": 0}, {"node": "Fetch CONDITION_OCCURRENCE", "type": "main", "index": 0}, {"node": "Fetch DRUG_EXPOSURE", "type": "main", "index": 0}, {"node": "Fetch FHIR Bundle", "type": "main", "index": 0}]]},
+    "Fetch EHR CSV": {"main": [[{"node": "Wait for fixtures", "type": "main", "index": 0}]]},
+    "Fetch CONDITION_OCCURRENCE": {"main": [[{"node": "Wait for fixtures", "type": "main", "index": 1}]]},
+    "Fetch DRUG_EXPOSURE": {"main": [[{"node": "Wait for fixtures", "type": "main", "index": 2}]]},
+    "Fetch FHIR Bundle": {"main": [[{"node": "Wait for fixtures", "type": "main", "index": 3}]]},
+    "Wait for fixtures": {"main": [[{"node": "Check loader shape", "type": "main", "index": 0}]]},
+    "Check loader shape": {"main": [[{"node": "SIDHA_SUMMARY_WEBHOOK_URL", "type": "main", "index": 0}]]}
+  }
+}
