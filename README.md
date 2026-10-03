@@ -160,21 +160,21 @@ print(evaluate(screener, timelines, labels))
 ## Architecture
 
 ```
-┌─────────────┐     ┌─────────────┐     ┌──────────────────┐
+┌─────────────┐     ┌──────────────┐     ┌───────────────────┐
 │   ingest    │────▶│   clinical   │────▶│    diagnostics    │
 │ public      │     │ ICD-10/11,   │     │ screener,         │
 │ social +    │     │ SNOMED,      │     │ differential      │
 │ episodic    │     │ phenotypes,  │     │ ranking,          │
 │ records     │     │ instruments  │     │ misdiagnosis      │
-└─────────────┘     └─────────────┘     └──────────────────┘
+└─────────────┘     └──────────────┘     └────────┬──────────┘
                                                   │
                                                   ▼
-┌─────────────┐     ┌─────────────┐     ┌──────────────────┐
+┌─────────────┐     ┌──────────────┐     ┌───────────────────┐
 │    eval     │◀────│    judge     │◀────│    normalize      │
 │ metrics +   │     │ LLM-as-judge │     │ OMOP CDM +        │
 │ synthetic   │     │ differential-│     │ FHIR R4 output    │
 │ golden sets │     │ dx harness   │     │                   │
-└─────────────┘     └─────────────┘     └──────────────────┘
+└─────────────┘     └──────────────┘     └───────────────────┘
 ```
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full design and
