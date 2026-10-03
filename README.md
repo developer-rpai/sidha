@@ -228,9 +228,10 @@ Contributions are welcome — code, documentation, dataset ideas, and evaluation
 design. See [CONTRIBUTING.md](CONTRIBUTING.md). Ground rules: public/synthetic
 data only, no medical-advice framing, standards (OMOP/FHIR) first.
 
-A proposed n8n check of the synthetic fixture shape is described in
-[contrib/n8n/README.md](contrib/n8n/README.md). The workflow export is not
-in the repo yet. It does not require Warp to run.
+An importable n8n fixture-shape check (inflammatory-disease loaders;
+hidradenitis suppurativa is the flagship example) is in
+[contrib/n8n/README.md](contrib/n8n/README.md). Apache-2.0. It does not
+require Warp to run.
 
 ## Citation
 
