@@ -16,15 +16,22 @@ language to clinical taxonomies (ICD/SNOMED), normalizes everything to open
 health-data standards (OMOP CDM, FHIR R4), and scores early-detection risk with
 transparent, explainable models — all runnable on synthetic data with zero PHI.
 
+The original contribution is inflammatory-disease data infrastructure.
+Hidradenitis suppurativa is the flagship example in this repository, not a
+claim that the CSV, FHIR, and OMOP loaders accept only HS data.
+
 ## Install
 
 ```bash
 git clone https://github.com/developer-rpai/sidha.git
 cd sidha
-pip install -e .     # PyPI release planned for Phase 5
+pip install -e .            # runtime; PyPI release planned for Phase 5
+pip install -e ".[dev]"     # pytest; required before python -m pytest
 ```
 
 Requires Python ≥ 3.10. The core is stdlib-only — no heavy dependencies.
+CI installs the `dev` extra. `python -m pytest` fails if you only ran
+`pip install -e .`.
 
 ## 30-second demo
 
@@ -75,7 +82,7 @@ SIDHA aims to be that shared foundation.
 ## What you can do with it today
 
 - **Load records** from flat CSVs, FHIR R4 Bundles, or OMOP CDM extracts
-  (`sidha.ehr`).
+  (`sidha.ehr`). The loaders are disease-agnostic; HS is the flagship example.
 - **Phenotype cohorts** with versioned, citable HS case definitions,
   comorbidity profiles, Hurley staging helpers, and HiSQOL/HSSD instrument
   scoring (`sidha.clinical`).
@@ -90,7 +97,9 @@ SIDHA aims to be that shared foundation.
   explainable baseline (`sidha.diagnostics`).
 - **Work on synthetic data** — a seeded synthetic HS cohort generator means
   every tutorial, test, and demo runs with zero PHI (`sidha.datasets`).
-- **Normalize** to OMOP CDM and FHIR R4 builders (`sidha.normalize`).
+- **Normalize** is not implemented. `sidha.normalize` is a placeholder.
+  `sidha.ehr` loads CSV, FHIR R4 Bundles, and OMOP CDM CSV extracts; it
+  does not write those formats.
 
 ## Quickstart
 
@@ -98,6 +107,8 @@ SIDHA aims to be that shared foundation.
 pip install sidha        # once published; for now: pip install -e .
 python -c "import sidha; print(sidha.__version__)"
 ```
+
+Tests need the dev extra: `pip install -e ".[dev]"` then `python -m pytest`.
 
 End-to-end on synthetic data — no PHI, no setup:
 
@@ -188,8 +199,11 @@ sidha/
 ├── notebooks/           # exploratory analyses
 ├── data/                # synthetic/sample data ONLY (never real data)
 ├── docs/                # architecture + roadmap + big-package plan
-└── tests/               # 52 tests, all on synthetic data
+└── tests/               # tests, all on synthetic data
 ```
+
+`taxonomy`, `normalize`, `judge`, and `eval` are module docstrings only.
+There is no `sidha/sensors` package yet. `notebooks/` has no notebook yet.
 
 ## Roadmap
 
@@ -205,7 +219,8 @@ sidha/
 - **Phase 5:** PyPI release, docs site, v1.0 tag, Zenodo DOI.
 
 The detailed checklist lives in [docs/ROADMAP.md](docs/ROADMAP.md).
-`good-first-issue` labels mark bite-size entry points for outside contributors.
+`good first issue` labels mark bite-size entry points for outside contributors.
+That is the label name on this repo (spaces). There is no `good-first-issue` label.
 
 ## Contributing
 
@@ -213,9 +228,15 @@ Contributions are welcome — code, documentation, dataset ideas, and evaluation
 design. See [CONTRIBUTING.md](CONTRIBUTING.md). Ground rules: public/synthetic
 data only, no medical-advice framing, standards (OMOP/FHIR) first.
 
+An importable n8n fixture-shape check (inflammatory-disease loaders;
+hidradenitis suppurativa is the flagship example) is in
+[contrib/n8n/README.md](contrib/n8n/README.md). Apache-2.0. It does not
+require Warp to run.
+
 ## Citation
 
 If you use SIDHA in research, please cite it (see [CITATION.cff](CITATION.cff)).
+There is no Zenodo DOI yet. Do not invent one.
 
 ## License
 
