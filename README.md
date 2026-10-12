@@ -1,5 +1,6 @@
 [![CI](https://github.com/developer-rpai/sidha/actions/workflows/ci.yml/badge.svg)](https://github.com/developer-rpai/sidha/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/sidha.svg)](https://pypi.org/project/sidha/)
 [![Python >=3.10](https://img.shields.io/badge/python-%3E%3D3.10-blue.svg)](pyproject.toml)
 
 # SIDHA — Sensor-to-Insight Data for Hidradenitis Suppurativa Architecture
@@ -19,9 +20,15 @@ transparent, explainable models — all runnable on synthetic data with zero PHI
 ## Install
 
 ```bash
+pip install sidha
+```
+
+For development, install from source:
+
+```bash
 git clone https://github.com/developer-rpai/sidha.git
 cd sidha
-pip install -e .     # PyPI release planned for Phase 5
+pip install -e ".[dev]"
 ```
 
 Requires Python ≥ 3.10. The core is stdlib-only — no heavy dependencies.
@@ -95,7 +102,7 @@ SIDHA aims to be that shared foundation.
 ## Quickstart
 
 ```bash
-pip install sidha        # once published; for now: pip install -e .
+pip install sidha
 python -c "import sidha; print(sidha.__version__)"
 ```
 
@@ -202,7 +209,8 @@ sidha/
   expansion.
 - **Phase 4:** `sensors` + `nlp` + `viz` + `privacy` — full sensor-to-insight
   pipeline.
-- **Phase 5:** PyPI release, docs site, v1.0 tag, Zenodo DOI.
+- **Phase 5:** docs site, v1.0 tag, Zenodo DOI. (v0.1.0 is already on
+  [PyPI](https://pypi.org/project/sidha/).)
 
 The detailed checklist lives in [docs/ROADMAP.md](docs/ROADMAP.md).
 `good-first-issue` labels mark bite-size entry points for outside contributors.

@@ -124,7 +124,7 @@ three ways:
   delays). 23 new tests; 52 total passing. Honest framing throughout:
   research aid, not a diagnostic device; reference weights are illustrative
   defaults, not fitted on real data.
-  Still yours: GitHub repo creation + first push (see LAUNCH-CHECKLIST.md).
+  Repo is public; v0.1.0 is on PyPI.
 - **Phase 3 (next):** `datasets`. GEO loaders, IHS4 loader (license permitting),
   dataset catalog, synthetic cohort generator.
 - **Phase 4:** `sensors` + `nlp` + `viz` + `privacy`. Full pipeline:
