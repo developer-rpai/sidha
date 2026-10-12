@@ -8,7 +8,7 @@ and run end-to-end on synthetic data.
 - [ ] Create public repo on GitHub (`developer-rpai/sidha`), push scaffold
 - [ ] README architecture diagram + quickstart verified on a clean machine
 - [ ] Announce intent on OHDSI forums + relevant workgroup calls
-- [ ] Mint Zenodo DOI for the first release tag (citable from day one)
+- [x] Mint Zenodo DOI for the first release tag (citable from day one) — concept DOI [10.5281/zenodo.23327684](https://doi.org/10.5281/zenodo.23327684), v0.1.0 version DOI [10.5281/zenodo.23327685](https://doi.org/10.5281/zenodo.23327685)
 
 ## Weeks 3–4 — Ingest + clinical coding
 - [x] `ingest`: Reddit collector for public HS discussion (provenance-logged)
