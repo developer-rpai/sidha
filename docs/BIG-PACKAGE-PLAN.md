@@ -124,13 +124,16 @@ three ways:
   delays). 23 new tests; 52 total passing. Honest framing throughout:
   research aid, not a diagnostic device; reference weights are illustrative
   defaults, not fitted on real data.
-  Repo is public; v0.1.0 is on PyPI.
+  Repo is public; v0.1.0 is on PyPI and Zenodo
+  (concept DOI 10.5281/zenodo.23327684).
 - **Phase 3 (next):** `datasets`. GEO loaders, IHS4 loader (license permitting),
   dataset catalog, synthetic cohort generator.
 - **Phase 4:** `sensors` + `nlp` + `viz` + `privacy`. Full pipeline:
   raw data in, normalized OMOP/FHIR out, evaluated and visualized.
-- **Phase 5:** Packaging and release. PyPI, conda-forge, Docker, docs site,
-  v1.0 tag, Zenodo DOI, short methods note on arXiv citing the repo.
+- **Phase 5:** Packaging and release. conda-forge, Docker, docs site,
+  v1.0 tag, short methods note on arXiv citing the repo. v0.1.0 is on PyPI
+  and Zenodo (concept DOI 10.5281/zenodo.23327684; version DOI
+  10.5281/zenodo.23327685).
 
 ## What I need from you
 

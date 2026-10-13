@@ -7,8 +7,13 @@ authors:
     given-names: Rakesh
 license: Apache-2.0
 version: 0.1.0
-date-released: 2026-09-12
+doi: 10.5281/zenodo.23327684
+date-released: 2026-10-13
 repository-code: "https://github.com/developer-rpai/sidha"
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23327685
+    description: Version DOI for v0.1.0
 keywords:
   - hidradenitis-suppurativa
   - OMOP-CDM

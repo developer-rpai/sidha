@@ -1,6 +1,7 @@
 [![CI](https://github.com/developer-rpai/sidha/actions/workflows/ci.yml/badge.svg)](https://github.com/developer-rpai/sidha/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/sidha.svg)](https://pypi.org/project/sidha/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23327684.svg)](https://doi.org/10.5281/zenodo.23327684)
 [![Python >=3.10](https://img.shields.io/badge/python-%3E%3D3.10-blue.svg)](pyproject.toml)
 
 # SIDHA — Sensor-to-Insight Data for Hidradenitis Suppurativa Architecture
@@ -209,8 +210,9 @@ sidha/
   expansion.
 - **Phase 4:** `sensors` + `nlp` + `viz` + `privacy` — full sensor-to-insight
   pipeline.
-- **Phase 5:** docs site, v1.0 tag, Zenodo DOI. (v0.1.0 is already on
-  [PyPI](https://pypi.org/project/sidha/).)
+- **Phase 5:** docs site and v1.0 tag. v0.1.0 is on
+  [PyPI](https://pypi.org/project/sidha/) and
+  [Zenodo](https://doi.org/10.5281/zenodo.23327684).
 
 The detailed checklist lives in [docs/ROADMAP.md](docs/ROADMAP.md).
 `good-first-issue` labels mark bite-size entry points for outside contributors.
@@ -223,7 +225,11 @@ data only, no medical-advice framing, standards (OMOP/FHIR) first.
 
 ## Citation
 
-If you use SIDHA in research, please cite it (see [CITATION.cff](CITATION.cff)).
+If you use SIDHA in research, cite the concept DOI. It always resolves to the latest archived release:
+
+Pai, R. (2026). *SIDHA: Sensor-to-Insight Data for Hidradenitis Suppurativa Architecture*. Zenodo. https://doi.org/10.5281/zenodo.23327684
+
+The v0.1.0 version DOI is https://doi.org/10.5281/zenodo.23327685. Machine-readable metadata is in [CITATION.cff](CITATION.cff).
 
 ## License
 
