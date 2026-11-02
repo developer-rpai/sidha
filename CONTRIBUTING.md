@@ -24,6 +24,12 @@ dataset curation ideas, and evaluation design — are all welcome.
 4. CI must pass (install check + syntax compile). Add tests where behavior
    is non-trivial.
 
+## Continuous integration
+
+`pyproject.toml` declares `requires-python = ">=3.10"`, but
+[GitHub Actions CI](.github/workflows/ci.yml) currently runs on Python 3.11 only.
+A local pass on Python 3.10 is not the result shown by the CI badge.
+
 ## Code style
 
 - Python 3.10+, type hints on public functions, docstrings on modules.
